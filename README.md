@@ -1,67 +1,311 @@
-# Fynd Mini Checkout & Browser Test Suite (Indian Rupees 🇮🇳)
+# Fynd Mini Checkout & Browser Test Suite
 
-An attractive, colorful single-page checkout application and automated end-to-end browser test suite built with **React 19**, **Vite**, and **Playwright**, featuring Indian Rupee (`₹`) pricing and a modern Indian e-commerce aesthetic.
+A modern, responsive e-commerce checkout application with automated end-to-end browser testing, developed as part of the **Fynd Hiring Hackathon – SDET Intern Track**.
 
----
-
-## 🎨 Visual & Functional Features
-
-- **Attractive Indian E-Commerce Design**:
-  - Gradient header with brand icon and 256-bit SSL security pill.
-  - Festive announcement bar with Free Express Delivery across India.
-  - Glowing product cards with discount badges (`50% OFF`), MRP comparison, and emoji visuals.
-  - Sleek shopping bag table with tactile quantity steppers (`−` `+`) and line totals in `₹`.
-  - Payment method simulator (⚡ UPI / GPay / PhonePe and 💵 Cash on Delivery).
-  - Celebratory confirmation screen with confetti accents, order reference code, and breakdown.
-- **Two Synthetic Products (Fixed Prices in INR)**:
-  - 🖱️ **Wireless Gaming Mouse** — **₹500.00** <del>₹999.00</del>
-  - ⌨️ **RGB Mechanical Keyboard** — **₹1,500.00** <del>₹2,999.00</del>
-- **Error Handling & Protection**:
-  - Empty cart validation.
-  - Required Full Name validation with input preservation.
-  - Synchronous double-click protection preventing duplicate orders.
+Built using **React 19, Vite, JavaScript, and Playwright**, this project demonstrates checkout functionality, input validation, accurate price calculations, duplicate-order prevention, and automated browser testing.
 
 ---
 
-## 🚀 Running the App Locally
+## Project Overview
 
-### 1. Start Development Server
+The Mini Checkout application simulates a real-world online shopping experience where customers can select products, manage quantities, review their order totals, and complete checkout.
+
+The primary objective is to ensure a reliable checkout experience by identifying common user errors and validating critical customer journeys through automated browser tests.
+
+The application uses two synthetic products with fixed prices and Indian Rupee (₹) currency formatting. No backend, database, payment gateway, or external services are required.
+
+## Application Preview
+
+![Fynd Mini Checkout - GitHub Repository Screenshot](./screenshots/github-repository.png)
+
+*Project repository overview. Add your uploaded screenshot to the `screenshots` folder using the filename `github-repository.png`.*
+
+## Key Features
+
+### 1. Product Management
+- Two synthetic products with fixed prices.
+- Add and remove products from the shopping cart.
+- Increase or decrease product quantities.
+- Automatic line-total calculations.
+- Discount badges and original price comparisons.
+
+### 2. Shopping Cart & Order Summary
+- Dynamic cart updates.
+- Real-time quantity calculations.
+- Automatic subtotal and order-total updates.
+- Indian Rupee (₹) currency formatting.
+- Accurate price calculations.
+
+### 3. Checkout Validation
+- Required customer full-name field.
+- Clear validation messages for missing information.
+- Prevents checkout when the cart is empty.
+- Preserves customer-entered information after validation errors.
+
+### 4. Order Confirmation
+- Generates a unique order reference.
+- Displays order confirmation after successful checkout.
+- Prevents duplicate orders caused by rapid double-clicking.
+- Displays the completed order summary.
+
+### 5. Browser Automation
+- Automated end-to-end testing using Playwright.
+- Customer-facing UI assertions.
+- Validation of successful and unsuccessful checkout scenarios.
+- Verification of exact order totals.
+- Duplicate-order prevention checks.
+
+---
+
+## Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| React 19 | Frontend development |
+| Vite | Development server and build tool |
+| JavaScript | Application logic |
+| CSS | Responsive UI and styling |
+| Playwright | Browser automation |
+| ESLint | Code quality and linting |
+| Git & GitHub | Version control |
+
+---
+
+## Product Information
+
+The application contains two synthetic products with fixed prices.
+
+| Product | Price | Original Price |
+|---|---:|---:|
+| Wireless Gaming Mouse | ₹500.00 | ₹999.00 |
+| RGB Mechanical Keyboard | ₹1,500.00 | ₹2,999.00 |
+
+All prices are fixed for testing purposes.
+
+---
+
+## Project Structure
+
+```text
+fynd-checkout/
+│
+├── public/
+│
+├── src/
+│   ├── components/
+│   │   ├── ProductList.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Checkout.jsx
+│   │   └── Confirmation.jsx
+│   │
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
+│
+├── tests/
+│   └── checkout.spec.js
+│
+├── screenshots/
+│
+├── README.md
+├── TEST_PLAN.md
+├── playwright.config.js
+├── eslint.config.js
+├── package.json
+└── package-lock.json
+```
+
+---
+
+## Installation & Setup
+
+### Prerequisites
+
+- Node.js
+- npm
+- Git
+- Visual Studio Code
+
+### 1. Clone the Repository
+
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+```
+
+### 2. Navigate to the Project
+
+```bash
+cd fynd-checkout
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Start the Development Server
+
 ```bash
 npm run dev
 ```
-Open **`http://localhost:5173/`** in your browser.
 
-### 2. Run Browser Tests (Playwright)
-```bash
-npm test
+Open the local URL displayed in your terminal, usually:
+
+```text
+http://localhost:5173/
 ```
-*or*
+
+---
+
+## Browser Testing with Playwright
+
+### Install Playwright
+
+```bash
+npm install -D @playwright/test
+```
+
+Install Chromium:
+
+```bash
+npx playwright install chromium
+```
+
+### Execute Automated Tests
+
 ```bash
 npx playwright test
 ```
 
-### 3. View Interactive HTML Test Report
+Alternatively, if the test script is configured:
+
+```bash
+npm test
+```
+
+### View the HTML Test Report
+
 ```bash
 npx playwright show-report
 ```
 
-### 4. Code Quality & Build Checks
+### Run Tests in Browser UI Mode
+
+```bash
+npx playwright test --ui
+```
+
+---
+
+## Automated Test Coverage
+
+The test suite focuses on the most important checkout risks.
+
+| Test Case | Expected Result |
+|---|---|
+| Successful Checkout | Order confirmation and unique reference are displayed |
+| Missing Required Field | Checkout is blocked with a clear validation message |
+| Quantity Update | Exact line totals and order totals are calculated |
+| Empty Cart | Checkout is prevented |
+| Rapid Double-Click | Only one order confirmation is generated |
+
+### Detailed Test Scenarios
+
+**Test 01 – Successful Checkout**
+- Add products to the cart.
+- Enter the customer's name.
+- Click Place Order.
+- Verify the success confirmation.
+- Verify the order reference and total.
+
+**Test 02 – Missing Required Field**
+- Add a product to the cart.
+- Leave the full-name field empty.
+- Attempt checkout.
+- Verify the validation message.
+- Verify previously entered information is preserved.
+
+**Test 03 – Quantity and Price Accuracy**
+- Add a product.
+- Increase its quantity.
+- Verify the exact line total.
+- Verify the updated order total.
+- Decrease the quantity and verify the calculation again.
+
+**Test 04 – Empty Cart and Duplicate Submission**
+- Attempt checkout with an empty cart.
+- Verify that checkout is blocked.
+- Rapidly click Place Order.
+- Verify that only one confirmation is generated.
+
+Each automated test should begin with a clean application state to avoid interference between test cases.
+
+---
+
+## Test Plan & Manual Testing
+
+A separate test plan documents the test strategy, execution steps, expected results, and manual testing observations.
+
+See **[TEST_PLAN.md](./TEST_PLAN.md)** for:
+
+- Test objectives and scope.
+- Functional test scenarios.
+- Risk-based testing priorities.
+- Manual empty-cart testing.
+- Rapid double-click testing.
+- Actual results and defect tracking.
+
+Defects should be documented only when observed and reproducible.
+
+---
+
+## Code Quality & Production Build
+
+Run ESLint to check code quality:
+
 ```bash
 npm run lint
+```
+
+Create a production build:
+
+```bash
 npm run build
 ```
 
 ---
 
-## 📋 Automated Checks Summary (`tests/checkout.spec.js`)
+## Project Objectives
 
-1. **Check 1: Successful Checkout in INR (`₹`)**: Verifies adding items, entering customer name, placing order, validating order receipt summary, total paid in `₹`, and order reference format `ORD-[A-Z0-9]+-[A-Z0-9]+`.
-2. **Check 2: Missing Required Field**: Verifies blank Full Name triggers *"Full name is required to complete your order."*, keeps optional email intact, and allows recovery upon entering a name.
-3. **Check 3: Quantity Changes & Pricing Accuracy**: Verifies increments, decrements, item deletions, and empty-cart transitions calculate exact line totals and order totals in INR (`₹`).
-4. **Check 4: Empty Cart & Double-Click Guard**: Verifies empty cart cannot be checked out, and rapid double-clicking produces only one confirmation.
+This project demonstrates practical skills in:
+
+- React application development.
+- Functional testing.
+- End-to-end browser automation.
+- Test case design and execution.
+- UI validation and assertions.
+- Boundary-condition testing.
+- Error handling and debugging.
+- Quality assurance and defect reporting.
+
+## Hackathon Track
+
+**Fynd Hiring Hackathon – SDET Intern**
+
+Challenge: Mini Checkout and Browser Test Suite
+
+The project focuses on building a functional checkout experience and validating its reliability through reproducible browser automation.
 
 ---
 
-## 📄 Test Plan
-For detailed test strategies, manual test logs (empty cart and rapid double click), and defect tracking, see:
-👉 [TEST_PLAN.md](file:///D:/CERTIFICATES/PROJECT/fynd-checkout/TEST_PLAN.md)
+## Author
+
+**Sowmiya M**
+
+GitHub: [SOWMIYA1827](https://github.com/SOWMIYA1827)
+
+---
+
+*Built with a focus on reliable checkout experiences, meaningful test coverage, and quality-driven development.*

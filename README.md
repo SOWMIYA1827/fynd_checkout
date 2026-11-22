@@ -1,85 +1,37 @@
-# Fynd Mini Checkout & Browser Test Suite
+# Fynd Mini Checkout & Browser Test Suite (Indian Rupees 🇮🇳)
 
-A lightweight, robust single-page checkout application and automated end-to-end browser test suite built with **React 19**, **Vite**, and **Playwright**.
-
----
-
-## 📦 What Was Built
-
-### 1. Single-Page Checkout Application (`src/App.jsx` & `src/App.css`)
-- **Product Selection**: Two synthetic products with fixed pricing:
-  - 🖱️ **Wireless Mouse** — `$25.00`
-  - ⌨️ **Mechanical Keyboard** — `$75.00`
-- **Dynamic Cart Summary**:
-  - Add items to cart.
-  - Increment (`+`) and decrement (`−`) item quantities in real time.
-  - Remove items directly or by reducing quantity to 0.
-  - Reactive recalculation of line totals (`unit price × quantity`) and overall order total.
-- **Customer Details & Validation**:
-  - Required field: **Full Name** (`*`).
-  - Optional field: **Email Address**.
-  - **Error handling**: Displays clear, accessible validation messages without wiping out customer inputs.
-- **Order Placement & Double-Click Protection**:
-  - Synchronous lock prevents duplicate orders or multiple confirmations on rapid button clicks.
-  - Generates a unique order reference code (format: `ORD-<TIMESTAMP>-<SUFFIX>`).
-  - Renders a clean order confirmation summary with customer name, items, reference ID, and total paid.
+An attractive, colorful single-page checkout application and automated end-to-end browser test suite built with **React 19**, **Vite**, and **Playwright**, featuring Indian Rupee (`₹`) pricing and a modern Indian e-commerce aesthetic.
 
 ---
 
-## 🚀 Getting Started
+## 🎨 Visual & Functional Features
 
-### Prerequisites
-- **Node.js** (v18+ or v24+)
-- **npm** (v9+)
-
-### Installation
-Clone or navigate to the project directory:
-```bash
-cd d:/CERTIFICATES/PROJECT/fynd-checkout
-```
-
-Install application dependencies:
-```bash
-npm install
-```
-
-Install Playwright test runner and Chromium browser:
-```bash
-npm install -D @playwright/test
-npx playwright install chromium
-```
+- **Attractive Indian E-Commerce Design**:
+  - Gradient header with brand icon and 256-bit SSL security pill.
+  - Festive announcement bar with Free Express Delivery across India.
+  - Glowing product cards with discount badges (`50% OFF`), MRP comparison, and emoji visuals.
+  - Sleek shopping bag table with tactile quantity steppers (`−` `+`) and line totals in `₹`.
+  - Payment method simulator (⚡ UPI / GPay / PhonePe and 💵 Cash on Delivery).
+  - Celebratory confirmation screen with confetti accents, order reference code, and breakdown.
+- **Two Synthetic Products (Fixed Prices in INR)**:
+  - 🖱️ **Wireless Gaming Mouse** — **₹500.00** <del>₹999.00</del>
+  - ⌨️ **RGB Mechanical Keyboard** — **₹1,500.00** <del>₹2,999.00</del>
+- **Error Handling & Protection**:
+  - Empty cart validation.
+  - Required Full Name validation with input preservation.
+  - Synchronous double-click protection preventing duplicate orders.
 
 ---
 
-## 💻 Running the Application
+## 🚀 Running the App Locally
 
-Start the local Vite development server:
+### 1. Start Development Server
 ```bash
 npm run dev
 ```
+Open **`http://localhost:5173/`** in your browser.
 
-Open your browser and navigate to:
-```
-http://localhost:5173/
-```
-
-To create a production build and verify bundling:
-```bash
-npm run build
-```
-
-To run ESLint code health check:
-```bash
-npm run lint
-```
-
----
-
-## 🧪 Running the Browser Test Suite (Playwright)
-
-The automated test suite runs headlessly against the local Vite server (auto-started via Playwright's `webServer` configuration).
-
-### Run all tests:
+### 2. Run Browser Tests (Playwright)
 ```bash
 npm test
 ```
@@ -88,24 +40,28 @@ npm test
 npx playwright test
 ```
 
-### View test report in browser:
+### 3. View Interactive HTML Test Report
 ```bash
 npx playwright show-report
 ```
 
----
-
-## 📋 Automated Checks Overview (`tests/checkout.spec.js`)
-
-| Check | Scenario | Key Assertions |
-| :--- | :--- | :--- |
-| **Check 1** | **Successful Checkout** | Verifies adding items, entering customer name, submitting order, displaying the confirmation card, matching the order reference regex `ORD-[A-Z0-9]+-[A-Z0-9]+`, and confirming the exact total paid. |
-| **Check 2** | **Missing Required Field** | Verifies leaving the Full Name blank blocks checkout, displays *"Full name is required to complete your order."*, keeps customer's optional email intact, and allows recovery upon entering a name. |
-| **Check 3** | **Quantity Adjustments** | Verifies increments update line totals ($25 → $50 → $75) and order totals ($100 → $125 → $150). Verifies decrements and item removals accurately reduce totals down to $0.00 and restore empty cart state. |
-| **Check 4** | **Empty Cart & Double-Click Protection** | Verifies checking out with 0 items is rejected with *"Your cart is empty"*, and rapid double-clicking produces exactly one confirmation with a single reference ID. |
+### 4. Code Quality & Build Checks
+```bash
+npm run lint
+npm run build
+```
 
 ---
 
-## 📄 Test Plan & Manual Defect Report
-A comprehensive test plan analyzing checkout risks, manual exploratory testing of empty-cart submissions and double-click concurrency, and defect tracking is documented in:
+## 📋 Automated Checks Summary (`tests/checkout.spec.js`)
+
+1. **Check 1: Successful Checkout in INR (`₹`)**: Verifies adding items, entering customer name, placing order, validating order receipt summary, total paid in `₹`, and order reference format `ORD-[A-Z0-9]+-[A-Z0-9]+`.
+2. **Check 2: Missing Required Field**: Verifies blank Full Name triggers *"Full name is required to complete your order."*, keeps optional email intact, and allows recovery upon entering a name.
+3. **Check 3: Quantity Changes & Pricing Accuracy**: Verifies increments, decrements, item deletions, and empty-cart transitions calculate exact line totals and order totals in INR (`₹`).
+4. **Check 4: Empty Cart & Double-Click Guard**: Verifies empty cart cannot be checked out, and rapid double-clicking produces only one confirmation.
+
+---
+
+## 📄 Test Plan
+For detailed test strategies, manual test logs (empty cart and rapid double click), and defect tracking, see:
 👉 [TEST_PLAN.md](file:///D:/CERTIFICATES/PROJECT/fynd-checkout/TEST_PLAN.md)

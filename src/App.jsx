@@ -7,19 +7,27 @@ function generateOrderReference() {
   return `ORD-${timestamp}-${randomSuffix}`;
 }
 
+function formatINR(val) {
+  return `₹${val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 const PRODUCTS = [
   {
     id: 1,
-    name: 'Wireless Mouse',
-    description: 'Ergonomic 2.4GHz optical wireless mouse with silent clicks.',
-    price: 25.0,
+    name: 'Wireless Gaming Mouse',
+    description: 'Ergonomic 2.4GHz optical wireless mouse with silent tactile switches.',
+    originalPrice: 999.0,
+    price: 500.0,
+    badge: '🔥 BESTSELLER',
     emoji: '🖱️',
   },
   {
     id: 2,
     name: 'Mechanical Keyboard',
-    description: 'Compact 75% tactile mechanical keyboard with backlight.',
-    price: 75.0,
+    description: 'Compact 75% hot-swappable RGB tactile mechanical keyboard.',
+    originalPrice: 2999.0,
+    price: 1500.0,
+    badge: '⚡ POPULAR',
     emoji: '⌨️',
   },
 ];
@@ -28,6 +36,8 @@ export default function App() {
   const [cart, setCart] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('upi');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
@@ -66,6 +76,11 @@ export default function App() {
 
   // Calculations
   const orderTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalOriginal = cart.reduce(
+    (sum, item) => sum + (item.originalPrice || item.price) * item.quantity,
+    0
+  );
+  const totalSavings = totalOriginal - orderTotal;
 
   // Order submission
   const handlePlaceOrder = (e) => {
@@ -99,9 +114,12 @@ export default function App() {
       reference,
       customerName: trimmedName,
       customerEmail: customerEmail.trim(),
+      pincode: pincode.trim(),
+      paymentMethod,
       items: [...cart],
       total: orderTotal,
-      placedAt: new Date().toLocaleTimeString(),
+      savings: totalSavings,
+      placedAt: new Date().toLocaleTimeString('en-IN'),
     };
 
     setConfirmedOrder(newOrder);
@@ -114,268 +132,410 @@ export default function App() {
     setCart([]);
     setCustomerName('');
     setCustomerEmail('');
+    setPincode('');
     setErrorMessage('');
     setIsSubmitting(false);
   };
 
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <div className="header-content">
-          <h1>Fynd Mini Store</h1>
-          <p className="subtitle">Fast, reliable single-page checkout</p>
-        </div>
-      </header>
+    <div className="store-wrapper">
+      {/* Top Festive / Perks Banner */}
+      <div className="announcement-bar">
+        <span>🇮🇳 Mega India Tech Sale • <strong>FREE Express Delivery</strong> on all orders • 100% Genuine Products</span>
+      </div>
 
-      <main className="main-content">
-        {confirmedOrder ? (
-          /* Confirmation Screen */
-          <section className="confirmation-card" data-testid="order-confirmation">
-            <div className="confirmation-badge">✓</div>
-            <h2>Order Placed Successfully!</h2>
-            <p className="confirmation-thank-you">
-              Thank you, <strong data-testid="confirmed-customer-name">{confirmedOrder.customerName}</strong>!
-              Your order has been confirmed.
-            </p>
-
-            <div className="reference-box">
-              <span className="reference-label">Order Reference:</span>
-              <span className="reference-number" data-testid="order-reference">
-                {confirmedOrder.reference}
-              </span>
+      <div className="app-container">
+        {/* Colorful Modern Header */}
+        <header className="app-header">
+          <div className="brand-logo">
+            <span className="brand-icon">🛍️</span>
+            <div>
+              <h1 className="brand-title">
+                Fynd <span className="gradient-text">Mini Checkout</span>
+              </h1>
+              <p className="subtitle">Single-page lightning checkout in Indian Rupees (₹)</p>
             </div>
+          </div>
+          <div className="header-badge">
+            <span className="secure-pill">🔒 256-Bit SSL Encrypted</span>
+          </div>
+        </header>
 
-            <div className="confirmation-summary">
-              <h3>Items Purchased</h3>
-              <ul>
-                {confirmedOrder.items.map((item) => (
-                  <li key={item.id} className="summary-item">
-                    <span>
-                      {item.name} × {item.quantity}
-                    </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="confirmation-total">
-                <strong>Total Paid:</strong>
-                <strong data-testid="confirmed-total">
-                  ${confirmedOrder.total.toFixed(2)}
-                </strong>
+        <main className="main-content">
+          {confirmedOrder ? (
+            /* Colorful Order Confirmation Card */
+            <section className="confirmation-card" data-testid="order-confirmation">
+              <div className="confetti-decorations" aria-hidden="true">
+                <span className="confetti c1">🎉</span>
+                <span className="confetti c2">✨</span>
+                <span className="confetti c3">🎊</span>
               </div>
-            </div>
 
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleStartNewOrder}
-              data-testid="start-new-order-btn"
-            >
-              Place Another Order
-            </button>
-          </section>
-        ) : (
-          /* Checkout Journey */
-          <div className="checkout-grid">
-            {/* Left Column: Products & Cart */}
-            <div className="products-cart-column">
-              {/* Product Catalog */}
-              <section className="card">
-                <h2>1. Select Products</h2>
-                <div className="products-list">
-                  {PRODUCTS.map((product) => (
-                    <div
-                      key={product.id}
-                      className="product-card"
-                      data-testid={`product-card-${product.id}`}
-                    >
-                      <div className="product-icon">{product.emoji}</div>
-                      <div className="product-info">
-                        <h3 data-testid={`product-name-${product.id}`}>{product.name}</h3>
-                        <p className="product-desc">{product.description}</p>
-                        <div className="product-price" data-testid={`product-price-${product.id}`}>
-                          ${product.price.toFixed(2)}
+              <div className="confirmation-badge">✓</div>
+              <h2 className="confirmation-title">Order Placed Successfully!</h2>
+              <p className="confirmation-thank-you">
+                Dhanyavaad, <strong data-testid="confirmed-customer-name">{confirmedOrder.customerName}</strong>! Your order is confirmed and will be dispatched via Express Courier.
+              </p>
+
+              <div className="reference-box">
+                <span className="reference-label">Order Reference ID</span>
+                <span className="reference-number" data-testid="order-reference">
+                  {confirmedOrder.reference}
+                </span>
+                <span className="reference-tag">Keep this reference for live tracking</span>
+              </div>
+
+              <div className="confirmation-summary">
+                <div className="summary-header">
+                  <h3>Order Receipt</h3>
+                  <span className="payment-pill">Paid via {confirmedOrder.paymentMethod.toUpperCase()}</span>
+                </div>
+                <ul className="summary-list">
+                  {confirmedOrder.items.map((item) => (
+                    <li key={item.id} className="summary-item">
+                      <div className="summary-item-left">
+                        <span className="item-emoji">{item.emoji}</span>
+                        <div>
+                          <strong>{item.name}</strong>
+                          <span className="item-qty-tag">Qty: {item.quantity}</span>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        className="btn btn-primary btn-sm"
-                        onClick={() => addToCart(product)}
-                        data-testid={`add-to-cart-${product.id}`}
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
+                      <span className="summary-item-price">
+                        {formatINR(item.price * item.quantity)}
+                      </span>
+                    </li>
                   ))}
-                </div>
-              </section>
+                </ul>
 
-              {/* Cart Summary */}
-              <section className="card">
-                <h2>2. Your Cart</h2>
-                {cart.length === 0 ? (
-                  <p className="empty-cart-message" data-testid="empty-cart-message">
-                    Your cart is currently empty. Please select an item above.
-                  </p>
-                ) : (
-                  <div className="cart-table-wrapper">
-                    <table className="cart-table">
-                      <thead>
-                        <tr>
-                          <th>Item</th>
-                          <th>Price</th>
-                          <th>Quantity</th>
-                          <th>Line Total</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {cart.map((item) => (
-                          <tr key={item.id} data-testid={`cart-row-${item.id}`}>
-                            <td>
-                              <strong>{item.name}</strong>
-                            </td>
-                            <td>${item.price.toFixed(2)}</td>
-                            <td>
-                              <div className="qty-controls">
-                                <button
-                                  type="button"
-                                  className="btn-qty"
-                                  onClick={() => updateQuantity(item.id, -1)}
-                                  data-testid={`decrease-qty-${item.id}`}
-                                  aria-label={`Decrease ${item.name} quantity`}
-                                >
-                                  −
-                                </button>
-                                <span
-                                  className="qty-display"
-                                  data-testid={`item-quantity-${item.id}`}
-                                >
-                                  {item.quantity}
-                                </span>
-                                <button
-                                  type="button"
-                                  className="btn-qty"
-                                  onClick={() => updateQuantity(item.id, 1)}
-                                  data-testid={`increase-qty-${item.id}`}
-                                  aria-label={`Increase ${item.name} quantity`}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </td>
-                            <td>
-                              <strong
-                                className="line-total"
-                                data-testid={`line-total-${item.id}`}
-                              >
-                                ${(item.price * item.quantity).toFixed(2)}
-                              </strong>
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="btn-remove"
-                                onClick={() => removeFromCart(item.id)}
-                                data-testid={`remove-item-${item.id}`}
-                                aria-label={`Remove ${item.name} from cart`}
-                              >
-                                Remove
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                <div className="cost-breakdown">
+                  <div className="cost-row">
+                    <span>Shipping to {confirmedOrder.pincode ? `PIN ${confirmedOrder.pincode}` : 'India'}:</span>
+                    <span className="free-tag">FREE</span>
                   </div>
-                )}
-
-                <div className="cart-total-box">
-                  <span>Order Total:</span>
-                  <span className="order-total-amount" data-testid="order-total">
-                    ${orderTotal.toFixed(2)}
-                  </span>
+                  {confirmedOrder.savings > 0 && (
+                    <div className="cost-row savings-row">
+                      <span>Total Savings:</span>
+                      <span className="savings-tag">− {formatINR(confirmedOrder.savings)}</span>
+                    </div>
+                  )}
+                  <div className="confirmation-total">
+                    <span>Total Paid (INR):</span>
+                    <strong className="grand-total-text" data-testid="confirmed-total">
+                      {formatINR(confirmedOrder.total)}
+                    </strong>
+                  </div>
                 </div>
-              </section>
-            </div>
+              </div>
 
-            {/* Right Column: Checkout Form */}
-            <div className="checkout-column">
-              <section className="card">
-                <h2>3. Customer Details</h2>
-                <form onSubmit={handlePlaceOrder} noValidate>
-                  {errorMessage && (
-                    <div
-                      className="alert alert-error"
-                      role="alert"
-                      data-testid="validation-error"
-                    >
-                      {errorMessage}
+              <button
+                type="button"
+                className="btn btn-celebrate"
+                onClick={handleStartNewOrder}
+                data-testid="start-new-order-btn"
+              >
+                🛍️ Place Another Order
+              </button>
+            </section>
+          ) : (
+            /* Checkout Funnel Grid */
+            <div className="checkout-grid">
+              {/* Left Column: Products & Cart */}
+              <div className="products-cart-column">
+                {/* 1. Products Catalog */}
+                <section className="card card-glow">
+                  <div className="card-header-bar">
+                    <span className="step-number">1</span>
+                    <h2>Featured Products</h2>
+                    <span className="special-badge">Special Deals</span>
+                  </div>
+
+                  <div className="products-list">
+                    {PRODUCTS.map((product) => (
+                      <div
+                        key={product.id}
+                        className="product-card"
+                        data-testid={`product-card-${product.id}`}
+                      >
+                        <div className="product-media">
+                          <span className="product-emoji">{product.emoji}</span>
+                          <span className="product-deal-badge">{product.badge}</span>
+                        </div>
+                        <div className="product-info">
+                          <h3 data-testid={`product-name-${product.id}`}>{product.name}</h3>
+                          <p className="product-desc">{product.description}</p>
+                          <div className="price-tag-group">
+                            <span
+                              className="product-price"
+                              data-testid={`product-price-${product.id}`}
+                            >
+                              {formatINR(product.price)}
+                            </span>
+                            <span className="product-mrp">{formatINR(product.originalPrice)}</span>
+                            <span className="discount-pill">
+                              {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-add"
+                          onClick={() => addToCart(product)}
+                          data-testid={`add-to-cart-${product.id}`}
+                        >
+                          <span>+ Add to Cart</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* 2. Interactive Cart Summary */}
+                <section className="card">
+                  <div className="card-header-bar">
+                    <span className="step-number">2</span>
+                    <h2>Your Shopping Bag</h2>
+                    <span className="item-count-badge">
+                      {cart.reduce((sum, item) => sum + item.quantity, 0)} Items
+                    </span>
+                  </div>
+
+                  {cart.length === 0 ? (
+                    <div className="empty-cart-box" data-testid="empty-cart-message">
+                      <span className="empty-icon">🛒</span>
+                      <p className="empty-cart-text">Your cart is currently empty!</p>
+                      <p className="empty-cart-sub">Select an item above to start your checkout.</p>
+                    </div>
+                  ) : (
+                    <div className="cart-table-wrapper">
+                      <table className="cart-table">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Unit Price</th>
+                            <th>Quantity</th>
+                            <th>Line Total</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cart.map((item) => (
+                            <tr key={item.id} data-testid={`cart-row-${item.id}`}>
+                              <td>
+                                <div className="cart-product-cell">
+                                  <span className="cell-emoji">{item.emoji}</span>
+                                  <strong>{item.name}</strong>
+                                </div>
+                              </td>
+                              <td className="price-cell">{formatINR(item.price)}</td>
+                              <td>
+                                <div className="qty-controls">
+                                  <button
+                                    type="button"
+                                    className="btn-qty"
+                                    onClick={() => updateQuantity(item.id, -1)}
+                                    data-testid={`decrease-qty-${item.id}`}
+                                    aria-label={`Decrease ${item.name} quantity`}
+                                  >
+                                    −
+                                  </button>
+                                  <span
+                                    className="qty-display"
+                                    data-testid={`item-quantity-${item.id}`}
+                                  >
+                                    {item.quantity}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="btn-qty"
+                                    onClick={() => updateQuantity(item.id, 1)}
+                                    data-testid={`increase-qty-${item.id}`}
+                                    aria-label={`Increase ${item.name} quantity`}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </td>
+                              <td>
+                                <strong
+                                  className="line-total-amount"
+                                  data-testid={`line-total-${item.id}`}
+                                >
+                                  {formatINR(item.price * item.quantity)}
+                                </strong>
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn-remove"
+                                  onClick={() => removeFromCart(item.id)}
+                                  data-testid={`remove-item-${item.id}`}
+                                  aria-label={`Remove ${item.name} from cart`}
+                                >
+                                  Remove
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   )}
 
-                  <div className="form-group">
-                    <label htmlFor="customer-name">
-                      Full Name <span className="required-star">*</span>
-                    </label>
-                    <input
-                      id="customer-name"
-                      type="text"
-                      className="form-input"
-                      placeholder="e.g. John Doe"
-                      value={customerName}
-                      onChange={(e) => {
-                        setCustomerName(e.target.value);
-                        if (errorMessage) setErrorMessage('');
-                      }}
-                      data-testid="input-customer-name"
-                      required
-                    />
-                    <small className="form-hint">Required field</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="customer-email">Email Address (Optional)</label>
-                    <input
-                      id="customer-email"
-                      type="email"
-                      className="form-input"
-                      placeholder="e.g. john@example.com"
-                      value={customerEmail}
-                      onChange={(e) => setCustomerEmail(e.target.value)}
-                      data-testid="input-customer-email"
-                    />
-                  </div>
-
-                  <div className="order-summary-box">
-                    <div className="summary-row">
-                      <span>Items Count:</span>
-                      <span>{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
+                  {/* Reactive Order Total Box */}
+                  <div className="cart-total-bar">
+                    <div className="cart-total-label">
+                      <span>Order Total (INR):</span>
+                      <small>Inclusive of all Indian taxes (GST)</small>
                     </div>
-                    <div className="summary-row total-row">
-                      <span>Total to Pay:</span>
-                      <span data-testid="summary-total">${orderTotal.toFixed(2)}</span>
-                    </div>
+                    <span className="order-total-amount" data-testid="order-total">
+                      {formatINR(orderTotal)}
+                    </span>
+                  </div>
+                </section>
+              </div>
+
+              {/* Right Column: Checkout Form & Summary */}
+              <div className="checkout-column">
+                <section className="card checkout-card">
+                  <div className="card-header-bar">
+                    <span className="step-number">3</span>
+                    <h2>Customer & Delivery</h2>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-block btn-lg"
-                    disabled={isSubmitting}
-                    data-testid="place-order-btn"
-                  >
-                    {isSubmitting ? 'Placing Order...' : 'Place Order'}
-                  </button>
+                  <form onSubmit={handlePlaceOrder} noValidate>
+                    {errorMessage && (
+                      <div
+                        className="alert alert-error"
+                        role="alert"
+                        data-testid="validation-error"
+                      >
+                        <span className="alert-icon">⚠️</span>
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
 
-                  <p className="security-notice">
-                    🔒 Guaranteed safe single-click checkout. No double charges.
-                  </p>
-                </form>
-              </section>
+                    <div className="form-group">
+                      <label htmlFor="customer-name">
+                        Full Name <span className="required-star">*</span>
+                      </label>
+                      <input
+                        id="customer-name"
+                        type="text"
+                        className="form-input"
+                        placeholder="e.g. Rahul Sharma"
+                        value={customerName}
+                        onChange={(e) => {
+                          setCustomerName(e.target.value);
+                          if (errorMessage) setErrorMessage('');
+                        }}
+                        data-testid="input-customer-name"
+                        required
+                      />
+                      <small className="form-hint">Mandatory field for dispatch</small>
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="customer-email">Email Address (Optional)</label>
+                      <input
+                        id="customer-email"
+                        type="email"
+                        className="form-input"
+                        placeholder="e.g. rahul@example.com"
+                        value={customerEmail}
+                        onChange={(e) => setCustomerEmail(e.target.value)}
+                        data-testid="input-customer-email"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="customer-pincode">Delivery PIN Code</label>
+                      <input
+                        id="customer-pincode"
+                        type="text"
+                        maxLength={6}
+                        className="form-input"
+                        placeholder="e.g. 560001 (Bangalore / Mumbai / Delhi)"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Payment Options Simulation */}
+                    <div className="form-group">
+                      <label>Payment Method (Simulated)</label>
+                      <div className="payment-options">
+                        <label className={`payment-chip ${paymentMethod === 'upi' ? 'active' : ''}`}>
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="upi"
+                            checked={paymentMethod === 'upi'}
+                            onChange={() => setPaymentMethod('upi')}
+                          />
+                          <span>⚡ UPI / GPay / PhonePe</span>
+                        </label>
+                        <label className={`payment-chip ${paymentMethod === 'cod' ? 'active' : ''}`}>
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="cod"
+                            checked={paymentMethod === 'cod'}
+                            onChange={() => setPaymentMethod('cod')}
+                          />
+                          <span>💵 Cash on Delivery</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Order Price Breakdown */}
+                    <div className="order-summary-box">
+                      <div className="summary-row">
+                        <span>Items Total:</span>
+                        <span>{formatINR(orderTotal)}</span>
+                      </div>
+                      <div className="summary-row">
+                        <span>Shipping / Delivery:</span>
+                        <span className="free-tag">FREE</span>
+                      </div>
+                      {totalSavings > 0 && (
+                        <div className="summary-row savings-row">
+                          <span>Discount Savings:</span>
+                          <span className="savings-tag">− {formatINR(totalSavings)}</span>
+                        </div>
+                      )}
+                      <div className="summary-row total-row">
+                        <span>Amount Payable:</span>
+                        <span className="highlight-price" data-testid="summary-total">
+                          {formatINR(orderTotal)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Place Order Button */}
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-block btn-place-order"
+                      disabled={isSubmitting}
+                      data-testid="place-order-btn"
+                    >
+                      {isSubmitting ? (
+                        <span>⏳ Processing Order...</span>
+                      ) : (
+                        <span>🔒 Place Order • {formatINR(orderTotal)}</span>
+                      )}
+                    </button>
+
+                    <div className="security-badges">
+                      <span>✓ 100% Secure Checkout</span>
+                      <span>✓ No Double Billing Guarantee</span>
+                    </div>
+                  </form>
+                </section>
+              </div>
             </div>
-          </div>
-        )}
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

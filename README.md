@@ -14,12 +14,6 @@ The primary objective is to ensure a reliable checkout experience by identifying
 
 The application uses two synthetic products with fixed prices and Indian Rupee (₹) currency formatting. No backend, database, payment gateway, or external services are required.
 
-## Application Preview
-
-![Fynd Mini Checkout - GitHub Repository Screenshot](.Screenshot 2026-11-22 184252/.png)
-
-*Project repository overview. Add your uploaded screenshot to the `screenshots` folder using the filename `github-repository.png`.*
-
 ## Key Features
 
 ### 1. Product Management

@@ -16,7 +16,7 @@ The application uses two synthetic products with fixed prices and Indian Rupee (
 
 ## Application Preview
 
-![Fynd Mini Checkout - GitHub Repository Screenshot](./screenshots/github-repository.png)
+![Fynd Mini Checkout - GitHub Repository Screenshot](.Screenshot 2026-11-22 184252/.png)
 
 *Project repository overview. Add your uploaded screenshot to the `screenshots` folder using the filename `github-repository.png`.*
 

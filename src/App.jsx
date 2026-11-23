@@ -153,7 +153,7 @@ export default function App() {
               <h1 className="brand-title">
                 Fynd <span className="gradient-text">Mini Checkout</span>
               </h1>
-              <p className="subtitle">Single-page lightning checkout in Indian Rupees (₹)</p>
+              <p className="subtitle">Smart Checkout, Seamless Experience, Reliable Results.</p>
             </div>
           </div>
           <div className="header-badge">
